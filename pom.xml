@@ -11,7 +11,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>io.github.goldbalaji13</groupId>
+    <groupId>io.github.flc-org</groupId>
     <artifactId>mock-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>mock-server</name>
