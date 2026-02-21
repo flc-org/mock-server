@@ -16,17 +16,17 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>mock-server</name>
     <description>Record-and-replay downstream proxy for integration tests</description>
-    <url>https://github.com/goldbalaji13/mock-server</url>
+    <url>https://github.com/flc-org/mock-server</url>
     <scm>
-        <connection>scm:git:https://github.com/goldbalaji13/mock-server.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/goldbalaji13/mock-server.git</developerConnection>
-        <url>https://github.com/goldbalaji13/mock-server</url>
+        <connection>scm:git:https://github.com/flc-org/mock-server.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/flc-org/mock-server.git</developerConnection>
+        <url>https://github.com/flc-org/mock-server</url>
     </scm>
     <developers>
         <developer>
-            <id>goldbalaji13</id>
-            <name>Balaji</name>
-            <url>https://github.com/goldbalaji13</url>
+            <id>flc-org</id>
+            <name>flc-org</name>
+            <url>https://github.com/flc-org</url>
         </developer>
     </developers>
     <licenses>
@@ -197,8 +197,8 @@
                         <extensions>true</extensions>
                         <configuration>
                             <publishingServerId>central</publishingServerId>
-                            <autoPublish>true</autoPublish>
-                            <waitUntil>published</waitUntil>
+                            <autoPublish>false</autoPublish>
+                            <waitUntil>validated</waitUntil>
                         </configuration>
                     </plugin>
                     <plugin>
