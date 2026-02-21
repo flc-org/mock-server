@@ -13,7 +13,7 @@
 
     <groupId>io.github.flc-org</groupId>
     <artifactId>mock-server</artifactId>
-    <version>0.1.0-Alpha</version>
+    <version>0.0.1-SNAPSHOT</version>
     <name>mock-server</name>
     <description>Record-and-replay downstream proxy for integration tests</description>
     <url>https://github.com/goldbalaji13/mock-server</url>
