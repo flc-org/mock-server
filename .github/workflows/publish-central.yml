@@ -31,8 +31,8 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
-      - name: Publish utility + standalone artifacts
-        run: mvn -B -ntp -Prelease,standalone deploy
+      - name: Publish utility artifacts
+        run: mvn -B -ntp -Prelease deploy
         env:
           CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
           CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}

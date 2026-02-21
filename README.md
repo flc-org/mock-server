@@ -114,6 +114,9 @@ This creates:
 - `target/mock-server-0.0.1-SNAPSHOT.jar` (utility jar)
 - `target/mock-server-0.0.1-SNAPSHOT-standalone.jar` (standalone executable jar)
 
+Only the utility jar is published to Maven Central.
+Standalone jar is not published; build it from source using the `-Pstandalone` command above.
+
 ## Run
 
 Run standalone jar:
