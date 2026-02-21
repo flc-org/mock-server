@@ -32,7 +32,10 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.testsuites.mockserver.capture.CaptureAudit;
+import com.testsuites.mockserver.dao.CaptureAuditDao;
 import com.testsuites.mockserver.dao.RecordedResponseDao;
+import com.testsuites.mockserver.dto.CaptureAuditRecord;
 import com.testsuites.mockserver.dto.MockServerConfig;
 import com.testsuites.mockserver.dto.RecordedResponse;
 import com.testsuites.mockserver.proxy.ProxyRequest;
@@ -72,6 +75,11 @@ class ProxyServiceTest {
 
   @Mock
   private MockServerConfigService mockServerConfigService;
+
+  @Mock
+  private CaptureAuditDao captureAuditDao;
+
+  private final CaptureAudit captureAudit = new CaptureAudit();
 
   @Test
   void proxyRequestShouldReturnRecordedResponseWithContentTypeWhenCacheHit()
@@ -115,6 +123,52 @@ class ProxyServiceTest {
     assertEquals("application/json", response.headers().getFirst(HttpHeaders.CONTENT_TYPE));
     verifyNoInteractions(restTemplate);
     verify(recordedResponseDao, never()).save(any(RecordedResponse.class));
+  }
+
+  @Test
+  void proxyRequestShouldSaveCaptureAuditWhenCurrentCaptureKeyIsPresent()
+    throws Exception {
+    ObjectMapper objectMapper = new ObjectMapper();
+    ProxyService service = newService(objectMapper);
+    captureAudit.registerCaptureKey("capture-key-1");
+    ProxyRequest request = proxyRequest(
+      "GET",
+      "/proxy-1/orders",
+      "q=1",
+      new HttpHeaders(),
+      new byte[0]
+    );
+    MockServerConfig config = config("proxy-1", "ueqsHost", "spel:#request.path");
+    RecordedResponse recorded = new RecordedResponse();
+    recorded.setResponseStatus(200);
+    recorded.setResponseBody(new byte[0]);
+    recorded.setResponseHeadersJson(objectMapper.writeValueAsString(Map.of()));
+    recorded.setResponseContentType("application/json");
+
+    when(mockServerConfigMatcher.findConfig("/proxy-1/orders")).thenReturn(config);
+    when(mockServerConfigService.resolveDownstreamHost("ueqsHost"))
+      .thenReturn("https://downstream/");
+    when(hashGenerationService.generateHash("spel:#request.path", request))
+      .thenReturn("hash-1");
+    when(
+      recordedResponseDao.findFirstByMockServerConfigProxySaltAndRequestHash(
+        "proxy-1",
+        "hash-1"
+      )
+    )
+      .thenReturn(Optional.of(recorded));
+
+    service.proxyRequest(request);
+
+    ArgumentCaptor<CaptureAuditRecord> auditCaptor = ArgumentCaptor.forClass(
+      CaptureAuditRecord.class
+    );
+    verify(captureAuditDao).save(auditCaptor.capture());
+    CaptureAuditRecord savedAudit = auditCaptor.getValue();
+    assertEquals("capture-key-1", savedAudit.getCaptureKey());
+    assertEquals("proxy-1", savedAudit.getProxySalt());
+    assertTrue(savedAudit.getReq().contains("\"path\":\"/proxy-1/orders\""));
+    assertNotNull(savedAudit.getRequestDateTime());
   }
 
   @Test
@@ -449,7 +503,9 @@ class ProxyServiceTest {
       recordedResponseDao,
       restTemplate,
       objectMapper,
-      mockServerConfigService
+      mockServerConfigService,
+      captureAudit,
+      captureAuditDao
     );
   }
 

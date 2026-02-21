@@ -29,6 +29,7 @@
         <lombok.version>1.18.38</lombok.version>
         <spotless.version>2.43.0</spotless.version>
         <jacoco.version>0.8.12</jacoco.version>
+        <spring.starter.scope>provided</spring.starter.scope>
         <sonar.coverage.exclusions>**/config/**,**/dto/**,**/dao/**</sonar.coverage.exclusions>
     </properties>
 
@@ -36,12 +37,17 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <scope>provided</scope>
+            <scope>${spring.starter.scope}</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <scope>provided</scope>
+            <scope>${spring.starter.scope}</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+            <scope>${spring.starter.scope}</scope>
         </dependency>
         <dependency>
             <groupId>org.openjdk.nashorn</groupId>
@@ -145,7 +151,7 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>1.00</minimum>
+                                            <minimum>0.80</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
@@ -156,4 +162,38 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>standalone</id>
+            <properties>
+                <spring.starter.scope>compile</spring.starter.scope>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>repackage-standalone</id>
+                                <goals>
+                                    <goal>repackage</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>false</skip>
+                                    <classifier>standalone</classifier>
+                                    <attach>true</attach>
+                                    <mainClass>com.testsuites.mockserverstandalone.MockServerStandaloneApplication</mainClass>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

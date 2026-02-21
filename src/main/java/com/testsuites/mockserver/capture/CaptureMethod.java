@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.testsuites.mockserver;
+package com.testsuites.mockserver.capture;
 
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@Configuration
-@EnableAspectJAutoProxy(proxyTargetClass = true)
-@ComponentScan(basePackages = "com.testsuites.mockserver")
-public class MockServerModuleConfig {
-
-  public MockServerModuleConfig() {}
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface CaptureMethod {
+  String captureKeyExtractor();
 }

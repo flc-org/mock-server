@@ -13,16 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.testsuites.mockserver;
+package com.testsuites.mockserver.dto;
 
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
-@Configuration
-@EnableAspectJAutoProxy(proxyTargetClass = true)
-@ComponentScan(basePackages = "com.testsuites.mockserver")
-public class MockServerModuleConfig {
+@Entity
+@Table(name = "host_mapping")
+@Getter
+@Setter
+public class HostMapping {
 
-  public MockServerModuleConfig() {}
+  @Id
+  @Column(name = "host_key", length = 128, nullable = false)
+  private String hostKey;
+
+  @Column(name = "host_name", length = 2048, nullable = false)
+  private String hostName;
 }

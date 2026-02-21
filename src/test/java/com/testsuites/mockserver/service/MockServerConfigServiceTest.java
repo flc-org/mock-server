@@ -25,8 +25,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.testsuites.mockserver.config.MockHostProperties;
+import com.testsuites.mockserver.dao.HostMappingDao;
 import com.testsuites.mockserver.dao.MockServerConfigDao;
+import com.testsuites.mockserver.dto.HostMapping;
 import com.testsuites.mockserver.dto.MockServerConfig;
 import java.util.List;
 import java.util.Optional;
@@ -44,18 +45,20 @@ class MockServerConfigServiceTest {
   @Mock
   private MockServerConfigDao mockServerConfigDao;
 
-  private MockHostProperties mockHostProperties;
+  @Mock
+  private HostMappingDao hostMappingDao;
+
   private MockServerConfigService service;
 
   @BeforeEach
   void setUp() {
-    mockHostProperties = new MockHostProperties();
-    service = new MockServerConfigService(mockServerConfigDao, mockHostProperties);
+    service = new MockServerConfigService(mockServerConfigDao, hostMappingDao);
   }
 
   @Test
   void listShouldReturnAllConfigs() {
-    when(mockServerConfigDao.findAll()).thenReturn(List.of(config("proxy-1")));
+    when(mockServerConfigDao.findAll())
+      .thenReturn(List.of(config("proxy-1", "serviceAHost")));
 
     List<MockServerConfig> configs = service.list();
 
@@ -66,7 +69,7 @@ class MockServerConfigServiceTest {
   @Test
   void getShouldReturnConfigWhenFound() {
     when(mockServerConfigDao.findById("proxy-1"))
-      .thenReturn(Optional.of(config("proxy-1")));
+      .thenReturn(Optional.of(config("proxy-1", "serviceAHost")));
 
     MockServerConfig result = service.get("proxy-1");
 
@@ -96,7 +99,7 @@ class MockServerConfigServiceTest {
     MockServerConfig created = service.create(
       new MockServerConfigService.UpsertCommand(
         "  endpoint  ",
-        "  ueqsHost  ",
+        "  serviceAHost  ",
         "  spel:#request.path  "
       )
     );
@@ -104,14 +107,14 @@ class MockServerConfigServiceTest {
     assertNotNull(created.getProxySalt());
     assertTrue(created.getProxySalt().matches("^proxy-[a-z0-9]{10}$"));
     assertEquals("endpoint", created.getEndpointDesc());
-    assertEquals("ueqsHost", created.getHostKey());
+    assertEquals("serviceAHost", created.getHostKey());
     assertEquals("spel:#request.path", created.getHashGenerationFunction());
     verify(mockServerConfigDao, times(2)).existsByProxySalt(anyString());
   }
 
   @Test
   void updateShouldTrimAndSaveExistingEntity() {
-    MockServerConfig existing = config("proxy-1");
+    MockServerConfig existing = config("proxy-1", "serviceAHost");
     when(mockServerConfigDao.findById("proxy-1")).thenReturn(Optional.of(existing));
     when(mockServerConfigDao.save(any(MockServerConfig.class)))
       .thenAnswer(invocation -> invocation.getArgument(0));
@@ -120,14 +123,14 @@ class MockServerConfigServiceTest {
       "proxy-1",
       new MockServerConfigService.UpsertCommand(
         "  endpoint  ",
-        "  ueqsHost  ",
+        "  serviceAHost  ",
         "  spel:#request.path  "
       )
     );
 
     assertEquals("proxy-1", updated.getProxySalt());
     assertEquals("endpoint", updated.getEndpointDesc());
-    assertEquals("ueqsHost", updated.getHostKey());
+    assertEquals("serviceAHost", updated.getHostKey());
     assertEquals("spel:#request.path", updated.getHashGenerationFunction());
   }
 
@@ -143,7 +146,7 @@ class MockServerConfigServiceTest {
 
   @Test
   void updateHashFunctionShouldTrimAndSave() {
-    MockServerConfig existing = config("proxy-1");
+    MockServerConfig existing = config("proxy-1", "serviceAHost");
     existing.setHashGenerationFunction("old");
     when(mockServerConfigDao.findById("proxy-1")).thenReturn(Optional.of(existing));
     when(mockServerConfigDao.save(any(MockServerConfig.class)))
@@ -156,7 +159,7 @@ class MockServerConfigServiceTest {
 
   @Test
   void deleteShouldRemoveConfigWhenFound() {
-    MockServerConfig existing = config("proxy-1");
+    MockServerConfig existing = config("proxy-1", "serviceAHost");
     when(mockServerConfigDao.findById("proxy-1")).thenReturn(Optional.of(existing));
 
     service.delete("proxy-1");
@@ -199,15 +202,18 @@ class MockServerConfigServiceTest {
 
   @Test
   void resolveDownstreamHostShouldReturnTrimmedHost() {
-    mockHostProperties.getHosts().put("ueqsHost", "  https://www.ueqs.com  ");
+    when(hostMappingDao.findById("serviceAHost"))
+      .thenReturn(Optional.of(hostMapping("serviceAHost", "  https://api.service-a.example  ")));
 
-    String resolved = service.resolveDownstreamHost("ueqsHost");
+    String resolved = service.resolveDownstreamHost("serviceAHost");
 
-    assertEquals("https://www.ueqs.com", resolved);
+    assertEquals("https://api.service-a.example", resolved);
   }
 
   @Test
   void resolveDownstreamHostShouldFailWhenMissing() {
+    when(hostMappingDao.findById("missing")).thenReturn(Optional.empty());
+
     IllegalStateException ex = assertThrows(IllegalStateException.class, () ->
       service.resolveDownstreamHost("missing")
     );
@@ -215,12 +221,28 @@ class MockServerConfigServiceTest {
     assertEquals("No downstream host configured for hostKey=missing", ex.getMessage());
   }
 
-  private MockServerConfig config(String proxySalt) {
+  @Test
+  void resolveDownstreamHostShouldFailWhenBlank() {
+    IllegalStateException ex = assertThrows(IllegalStateException.class, () ->
+      service.resolveDownstreamHost("  ")
+    );
+
+    assertEquals("No downstream host configured for hostKey=  ", ex.getMessage());
+  }
+
+  private MockServerConfig config(String proxySalt, String hostKey) {
     MockServerConfig config = new MockServerConfig();
     config.setProxySalt(proxySalt);
     config.setEndpointDesc("endpoint");
-    config.setHostKey("ueqsHost");
+    config.setHostKey(hostKey);
     config.setHashGenerationFunction("spel:#request.path");
     return config;
+  }
+
+  private HostMapping hostMapping(String hostKey, String hostName) {
+    HostMapping hostMapping = new HostMapping();
+    hostMapping.setHostKey(hostKey);
+    hostMapping.setHostName(hostName);
+    return hostMapping;
   }
 }

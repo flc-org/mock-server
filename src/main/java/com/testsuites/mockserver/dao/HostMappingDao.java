@@ -13,18 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.testsuites.mockserver.config;
+package com.testsuites.mockserver.dao;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import com.testsuites.mockserver.dto.HostMapping;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Getter
-@Setter
-@ConfigurationProperties(prefix = "mock-server")
-public class MockHostProperties {
-
-  private Map<String, String> hosts = new LinkedHashMap<>();
-}
+public interface HostMappingDao extends JpaRepository<HostMapping, String> {}

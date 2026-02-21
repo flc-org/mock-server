@@ -13,16 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.testsuites.mockserver;
+package com.testsuites.mockserverstandalone;
 
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import com.testsuites.mockserver.MockServerModuleConfig;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.Import;
 
-@Configuration
-@EnableAspectJAutoProxy(proxyTargetClass = true)
-@ComponentScan(basePackages = "com.testsuites.mockserver")
-public class MockServerModuleConfig {
+@SpringBootConfiguration
+@EnableAutoConfiguration
+@Import(MockServerModuleConfig.class)
+public class MockServerStandaloneApplication {
 
-  public MockServerModuleConfig() {}
+  public static void main(String[] args) {
+    SpringApplication.run(MockServerStandaloneApplication.class, args);
+  }
 }

@@ -13,16 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.testsuites.mockserver;
+package com.testsuites.mockserver.dao;
 
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import com.testsuites.mockserver.dto.CaptureAuditRecord;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Configuration
-@EnableAspectJAutoProxy(proxyTargetClass = true)
-@ComponentScan(basePackages = "com.testsuites.mockserver")
-public class MockServerModuleConfig {
-
-  public MockServerModuleConfig() {}
-}
+public interface CaptureAuditDao extends JpaRepository<CaptureAuditRecord, Long> {}

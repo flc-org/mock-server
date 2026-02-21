@@ -15,8 +15,9 @@
  */
 package com.testsuites.mockserver.service;
 
-import com.testsuites.mockserver.config.MockHostProperties;
+import com.testsuites.mockserver.dao.HostMappingDao;
 import com.testsuites.mockserver.dao.MockServerConfigDao;
+import com.testsuites.mockserver.dto.HostMapping;
 import com.testsuites.mockserver.dto.MockServerConfig;
 import java.util.List;
 import java.util.Locale;
@@ -32,7 +33,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class MockServerConfigService {
 
   private final MockServerConfigDao mockServerConfigDao;
-  private final MockHostProperties mockHostProperties;
+  private final HostMappingDao hostMappingDao;
 
   public List<MockServerConfig> list() {
     return mockServerConfigDao.findAll();
@@ -86,7 +87,20 @@ public class MockServerConfigService {
   }
 
   public String resolveDownstreamHost(String hostKey) {
-    String resolved = mockHostProperties.getHosts().get(hostKey);
+    String normalizedHostKey = hostKey == null ? null : hostKey.trim();
+    if (!StringUtils.hasText(normalizedHostKey)) {
+      throw new IllegalStateException(
+        "No downstream host configured for hostKey=" + hostKey
+      );
+    }
+    HostMapping hostMapping = hostMappingDao
+      .findById(normalizedHostKey)
+      .orElseThrow(() ->
+        new IllegalStateException(
+          "No downstream host configured for hostKey=" + hostKey
+        )
+      );
+    String resolved = hostMapping.getHostName();
     if (!StringUtils.hasText(resolved)) {
       throw new IllegalStateException(
         "No downstream host configured for hostKey=" + hostKey
