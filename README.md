@@ -124,6 +124,19 @@ java -jar target/mock-server-0.0.1-SNAPSHOT-standalone.jar
 
 Default port is `8099` (can be overridden with Spring Boot properties).
 
+Datasource properties for standalone or utility-jar mode are exposed under:
+
+```yaml
+mock-server:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:file:./data/mock-server;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    hikari:
+      pool-name: mock-server-hikari
+```
+
 ## Web UI
 
 Singleton shell:

@@ -31,6 +31,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 public class MockServerStandaloneApplication {
 
   public static void main(String[] args) {
-    SpringApplication.run(MockServerStandaloneApplication.class, args);
+    SpringApplication application = new SpringApplication(
+      MockServerStandaloneApplication.class
+    );
+    application.setAdditionalProfiles("standalone");
+    application.run(args);
   }
 }
