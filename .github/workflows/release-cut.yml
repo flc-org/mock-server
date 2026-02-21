@@ -1,0 +1,80 @@
+name: Cut Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: "Release version (non-SNAPSHOT), e.g. 0.1.0"
+        required: true
+        type: string
+      next_snapshot_version:
+        description: "Next development version, e.g. 0.1.1-SNAPSHOT"
+        required: true
+        type: string
+      target_branch:
+        description: "Branch to release from"
+        required: true
+        default: "master"
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  cut-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.target_branch }}
+          fetch-depth: 0
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Validate versions
+        shell: bash
+        run: |
+          set -euo pipefail
+          RELEASE="${{ inputs.release_version }}"
+          NEXT="${{ inputs.next_snapshot_version }}"
+          if [[ "$RELEASE" == *SNAPSHOT* ]]; then
+            echo "release_version must not contain SNAPSHOT"
+            exit 1
+          fi
+          if [[ "$NEXT" != *-SNAPSHOT ]]; then
+            echo "next_snapshot_version must end with -SNAPSHOT"
+            exit 1
+          fi
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Set release version and commit
+        run: |
+          mvn -B -ntp versions:set -DnewVersion=${{ inputs.release_version }} -DgenerateBackupPoms=false
+          git add pom.xml
+          git commit -m "release: v${{ inputs.release_version }}"
+
+      - name: Create release tag
+        run: |
+          git tag v${{ inputs.release_version }}
+
+      - name: Set next snapshot version and commit
+        run: |
+          mvn -B -ntp versions:set -DnewVersion=${{ inputs.next_snapshot_version }} -DgenerateBackupPoms=false
+          git add pom.xml
+          git commit -m "chore: start ${{ inputs.next_snapshot_version }}"
+
+      - name: Push commits and tag
+        run: |
+          git push origin HEAD:${{ inputs.target_branch }}
+          git push origin v${{ inputs.release_version }}

@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
   release:
     types: [published]
+  push:
+    tags:
+      - "v*"
 
 permissions:
   contents: read
@@ -29,7 +32,7 @@ jobs:
           gpg-passphrase: GPG_PASSPHRASE
 
       - name: Publish utility + standalone artifacts
-        run: mvn -B -ntp -Prelease,standalone -DskipTests -Dspotless.check.skip=true deploy
+        run: mvn -B -ntp -Prelease,standalone deploy
         env:
           CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
           CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
