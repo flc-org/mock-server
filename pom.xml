@@ -16,6 +16,19 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>mock-server</name>
     <description>Record-and-replay downstream proxy for integration tests</description>
+    <url>https://github.com/goldbalaji13/mock-server</url>
+    <scm>
+        <connection>scm:git:https://github.com/goldbalaji13/mock-server.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/goldbalaji13/mock-server.git</developerConnection>
+        <url>https://github.com/goldbalaji13/mock-server</url>
+    </scm>
+    <developers>
+        <developer>
+            <id>goldbalaji13</id>
+            <name>Balaji</name>
+            <url>https://github.com/goldbalaji13</url>
+        </developer>
+    </developers>
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -29,6 +42,10 @@
         <lombok.version>1.18.38</lombok.version>
         <spotless.version>2.43.0</spotless.version>
         <jacoco.version>0.8.12</jacoco.version>
+        <maven.source.plugin.version>3.3.1</maven.source.plugin.version>
+        <maven.javadoc.plugin.version>3.7.0</maven.javadoc.plugin.version>
+        <maven.gpg.plugin.version>3.2.4</maven.gpg.plugin.version>
+        <central.publishing.plugin.version>0.10.0</central.publishing.plugin.version>
         <spring.starter.scope>provided</spring.starter.scope>
         <sonar.coverage.exclusions>**/config/**,**/dto/**,**/dao/**</sonar.coverage.exclusions>
     </properties>
@@ -170,6 +187,69 @@
 
     <profiles>
         <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>${central.publishing.plugin.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>true</autoPublish>
+                            <waitUntil>published</waitUntil>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>${maven.source.plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven.javadoc.plugin.version}</version>
+                        <configuration>
+                            <doclint>none</doclint>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven.gpg.plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>standalone</id>
             <properties>
                 <spring.starter.scope>compile</spring.starter.scope>
@@ -200,6 +280,43 @@
                                     <classifier>standalone</classifier>
                                     <attach>true</attach>
                                     <mainClass>com.testsuites.mockserverstandalone.MockServerStandaloneApplication</mainClass>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>${maven.source.plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>attach-standalone-sources</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                                <configuration>
+                                    <classifier>standalone-sources</classifier>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven.javadoc.plugin.version}</version>
+                        <configuration>
+                            <doclint>none</doclint>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-standalone-javadocs</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <classifier>standalone-javadoc</classifier>
                                 </configuration>
                             </execution>
                         </executions>
