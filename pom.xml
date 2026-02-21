@@ -11,7 +11,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.testsuites</groupId>
+    <groupId>io.github.goldbalaji13</groupId>
     <artifactId>mock-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>mock-server</name>
