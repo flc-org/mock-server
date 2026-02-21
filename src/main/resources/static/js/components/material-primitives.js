@@ -1,0 +1,10 @@
+import "/webjars/material__web/2.4.1/button/filled-button.js";
+import "/webjars/material__web/2.4.1/button/outlined-button.js";
+import "/webjars/material__web/2.4.1/button/text-button.js";
+import "/webjars/material__web/2.4.1/iconbutton/filled-icon-button.js";
+import "/webjars/material__web/2.4.1/iconbutton/outlined-icon-button.js";
+import "/webjars/material__web/2.4.1/icon/icon.js";
+import "/webjars/material__web/2.4.1/dialog/dialog.js";
+import "/webjars/material__web/2.4.1/textfield/filled-text-field.js";
+import "/webjars/material__web/2.4.1/textfield/outlined-text-field.js";
+import "/webjars/material__web/2.4.1/checkbox/checkbox.js";

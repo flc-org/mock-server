@@ -16,13 +16,17 @@
 package com.testsuites.mockserver.dao;
 
 import com.testsuites.mockserver.dto.RecordedResponse;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface RecordedResponseDao
-  extends JpaRepository<RecordedResponse, Long> {
+  extends JpaRepository<RecordedResponse, Long>, JpaSpecificationExecutor<RecordedResponse> {
   Optional<RecordedResponse> findFirstByMockServerConfigProxySaltAndRequestHash(
     String mockServerConfigProxySalt,
     String requestHash
   );
+
+  long countByIdIn(List<Long> ids);
 }

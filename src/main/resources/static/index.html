@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mock Server Console</title>
+    <link rel="stylesheet" href="/fonts/material-symbols-outlined.css" />
+    <link rel="stylesheet" href="/styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "tslib": "/webjars/tslib/2.8.1/tslib.es6.mjs",
+          "lit": "/webjars/lit/3.3.2/index.js",
+          "lit/": "/webjars/lit/3.3.2/",
+          "lit-html": "/webjars/lit-html/3.3.2/lit-html.js",
+          "lit-html/": "/webjars/lit-html/3.3.2/",
+          "lit-element": "/webjars/lit-element/4.2.2/index.js",
+          "lit-element/": "/webjars/lit-element/4.2.2/",
+          "@lit/reactive-element": "/webjars/lit__reactive-element/2.1.2/reactive-element.js",
+          "@lit/reactive-element/": "/webjars/lit__reactive-element/2.1.2/",
+          "@lit-labs/ssr-dom-shim": "/webjars/lit-labs__ssr-dom-shim/1.5.1/index.js",
+          "@lit-labs/ssr-dom-shim/": "/webjars/lit-labs__ssr-dom-shim/1.5.1/"
+        }
+      }
+    </script>
+    <script type="module" src="/js/index.js"></script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="app-header">
+        <h1 class="app-title">Mock Server Console</h1>
+        <p class="app-subtitle">Single page console for mock config, host mapping, capture audit, and recorded responses.</p>
+        <nav id="app-nav" class="app-nav" aria-label="Main"></nav>
+      </header>
+      <section id="app-view" class="app-view"></section>
+    </main>
+  </body>
+</html>

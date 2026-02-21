@@ -28,6 +28,7 @@ import com.testsuites.mockserver.proxy.ProxyRequest;
 import com.testsuites.mockserver.proxy.ProxyResponse;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -170,6 +171,10 @@ public class ProxyService {
         toSave.setResponseHeadersJson(
                 serializeHeaders(filterResponseHeaders(downstreamResponse.getHeaders()))
         );
+        toSave.setRequestBody(
+                new String(proxyRequest.getBody(), StandardCharsets.UTF_8)
+        );
+        toSave.setRequestHeadersJson(serializeHeaders(proxyRequest.getHeaders()));
         recordedResponseDao.save(toSave);
         return new ProxyResponse(
                 downstreamResponse.getStatusCode().value(),

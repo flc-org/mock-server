@@ -55,6 +55,11 @@
             <version>15.4</version>
         </dependency>
         <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>material__web</artifactId>
+            <version>2.4.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
@@ -169,6 +174,13 @@
             <properties>
                 <spring.starter.scope>compile</spring.starter.scope>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>com.h2database</groupId>
+                    <artifactId>h2</artifactId>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
             <build>
                 <plugins>
                     <plugin>

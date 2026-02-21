@@ -69,4 +69,12 @@ public class RecordedResponse {
   @Lob
   @Column(name = "response_headers_json", nullable = false)
   private String responseHeadersJson;
+
+  @Lob
+  @Column(name = "request_body")
+  private String requestBody;
+
+  @Lob
+  @Column(name = "request_headers_json")
+  private String requestHeadersJson;
 }

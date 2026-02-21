@@ -294,6 +294,13 @@ class ProxyServiceTest {
     assertEquals(201, saved.getResponseStatus());
     assertEquals("text/plain", saved.getResponseContentType());
     assertEquals(0, saved.getResponseBody().length);
+    assertEquals("request-body", saved.getRequestBody());
+    Map<String, List<String>> savedRequestHeaders = objectMapper.readValue(
+      saved.getRequestHeadersJson(),
+      new TypeReference<>() {}
+    );
+    assertNotNull(savedRequestHeaders.get("X-Req"));
+    assertNotNull(savedRequestHeaders.get("Connection"));
     Map<String, List<String>> savedHeaders = objectMapper.readValue(
       saved.getResponseHeadersJson(),
       new TypeReference<>() {}

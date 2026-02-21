@@ -1,0 +1,59 @@
+:root {
+  color-scheme: light;
+  font-family: Roboto, "Segoe UI", Tahoma, sans-serif;
+  --md-icon-font: "Material Symbols Outlined";
+}
+
+body {
+  margin: 0;
+  background: #f5f7fb;
+  color: #1b1b1f;
+}
+
+.app-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+  display: grid;
+  gap: 14px;
+}
+
+.app-header {
+  display: grid;
+  gap: 6px;
+}
+
+.app-title {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.app-subtitle {
+  margin: 0;
+  color: #4f5665;
+}
+
+.app-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.app-view {
+  background: #ffffff;
+  border: 1px solid #dde3ef;
+  border-radius: 14px;
+  padding: 12px;
+  min-height: 320px;
+}
+
+.inline-message {
+  color: #b3261e;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .app-shell {
+    padding: 10px;
+  }
+}

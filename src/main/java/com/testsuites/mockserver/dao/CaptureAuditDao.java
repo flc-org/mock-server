@@ -17,5 +17,7 @@ package com.testsuites.mockserver.dao;
 
 import com.testsuites.mockserver.dto.CaptureAuditRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface CaptureAuditDao extends JpaRepository<CaptureAuditRecord, Long> {}
+public interface CaptureAuditDao
+  extends JpaRepository<CaptureAuditRecord, Long>, JpaSpecificationExecutor<CaptureAuditRecord> {}
