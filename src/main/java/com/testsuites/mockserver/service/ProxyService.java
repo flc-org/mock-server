@@ -194,10 +194,7 @@ public class ProxyService {
     String normalizedBase = downstreamHost.endsWith("/")
       ? downstreamHost.substring(0, downstreamHost.length() - 1)
       : downstreamHost;
-    String normalizedPath = (sanitizedPath == null || sanitizedPath.isBlank())
-      ? ""
-      : (sanitizedPath.startsWith("/") ? sanitizedPath : "/" + sanitizedPath);
-    String url = normalizedBase + normalizedPath;
+    String url = normalizedBase + sanitizedPath;
     if (StringUtils.hasText(queryString)) {
       url += "?" + queryString;
     }
@@ -221,7 +218,7 @@ public class ProxyService {
       return "/";
     }
     String stripped = withoutLeadingSlash.substring(nextSlash);
-    return stripped.isBlank() ? "/" : stripped;
+    return stripped;
   }
 
   private String normalizePath(String path) {
